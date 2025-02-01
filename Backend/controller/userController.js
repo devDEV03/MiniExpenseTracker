@@ -36,7 +36,7 @@ const registerUser = asyncHandler( async (req,res) => {
         
         res.cookie("refreshToken", refreshtoken, {
             httpOnly: true,
-            secure: true,  // Use 'true' in production with HTTPS
+            secure: true,
             sameSite: "Strict",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
