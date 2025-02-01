@@ -9,6 +9,9 @@ connectDb();
 const app = express();
 const port = process.env.PORT || 5000;
 
+const allowedOrigins = [
+    "https://expensetracker-slwo.onrender.com/"
+  ];
 
 app.use(
     cors({
