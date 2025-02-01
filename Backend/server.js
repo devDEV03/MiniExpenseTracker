@@ -12,10 +12,17 @@ const port = process.env.PORT || 5000;
 
 app.use(
     cors({
-      origin: "*",  
-      credentials: true,  
+      origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true, 
     })
   );
+  
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/user",require("./routes/userRoutes"));
