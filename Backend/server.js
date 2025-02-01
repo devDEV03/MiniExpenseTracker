@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 
   app.use(
     cors({
-      origin: "https://expensetracker-slwo.onrender.com/",
+      origin: "https://expensetracker-slwo.onrender.com",
       credentials: true,
     })
   );
