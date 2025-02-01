@@ -13,26 +13,12 @@ const allowedOrigins = [
     "https://expensetracker-slwo.onrender.com",
   ];
 
-app.use(
+  app.use(
     cors({
-      origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true, 
+      origin: "*",
+      credentials: true,
     })
   );
-  
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://expensetracker-slwo.onrender.com');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-  });
 
 app.options('*', cors()); 
 app.use(cookieParser());
