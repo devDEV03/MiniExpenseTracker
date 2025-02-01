@@ -23,7 +23,7 @@ axiosInstance.interceptors.response.use(
             try {
                 console.log("Generating refresh token");
                 
-                const res = await axios.post("http://localhost:5000/api/user/refresh-token", {}, { withCredentials: true });
+                const res = await axios.post("https://expense-backend-wawe.onrender.com/api/user/refresh-token", {}, { withCredentials: true });
                 const newAccessToken = res.data.accessToken;
                 localStorage.setItem("accessToken", newAccessToken);
                 error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
