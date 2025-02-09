@@ -8,6 +8,12 @@ const generateRefreshToken = require("../util/generateRefreshToken");
 const registerUser = asyncHandler( async (req,res) => {
     const {firstName,lastName,email,password} = req.body;
 
+    const regexString = /^[^@]+@[^@]+\.[^@]+$/;
+
+    if(!regexString.test(email)){
+        res.status(404);
+        throw new Error("Enter a valid email");
+    }
     if(!firstName || !lastName || !email || !password ){
         res.status(404);
         throw new Error("All the fields are mandatory");

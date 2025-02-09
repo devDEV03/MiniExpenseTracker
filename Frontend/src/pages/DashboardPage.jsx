@@ -98,7 +98,7 @@ const DashboardPage = () => {
         if (values) {
           setSelectedDate(values.map((item) => item.format("YYYY-MM-DD")));
         } else {
-          setSelectedDate([]); // Reset if no dates are selected
+          setSelectedDate([]); 
         }
       };
     return (

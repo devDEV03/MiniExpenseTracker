@@ -9,25 +9,15 @@ connectDb();
 const app = express();
 const port = process.env.PORT || 5000;
 
-<<<<<<< HEAD
-=======
-// const corsOptions = {
-//     origin: 'https://expensetracker-slwo.onrender.com',
-//     credentials: true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-// };
+app.use(cors({
+    origin: "https://expensetracker-slwo.onrender.com",
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+}));
 
-// app.use((req, res, next) => {
-//     console.log("Incoming Request Headers:", req.headers);
-//     next();
-// });
-
-// app.use(cors(corsOptions));
 app.use(cookieParser());
->>>>>>> 4e81f10136f927eaeca3b085bf51548e5811c402
 app.use(express.json());
-// app.options('*', cors(corsOptions)); 
 app.use("/api/user",require("./routes/userRoutes"));
 app.use("/api/expense",require("./routes/expenseRoutes"));
 

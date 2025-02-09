@@ -26,6 +26,8 @@ const EntityLayout = ({children, title}) => {
             navigate("/");
         }
     },[navigate])
+
+    
   return (
     <div className='w-full h-screen'>
         {

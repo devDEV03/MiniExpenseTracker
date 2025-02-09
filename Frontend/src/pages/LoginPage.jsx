@@ -110,7 +110,8 @@ const LoginPage = () => {
 
 
                 <TextField id="outlined-basic" label="Email" variant="outlined" {...register("email", {
-                    required: "Email is required"
+                    required: "Email is required",
+                    pattern : {value : /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,message : "Enter a valid email"}
 
                 })}
                     fullWidth
