@@ -5,6 +5,25 @@ const jwt = require("jsonwebtoken");
 const generateAccessToken = require("../util/generateAccessToken");
 const generateRefreshToken = require("../util/generateRefreshToken");
 
+const parseExpiryTime = (expiry) => {
+    const unit = expiry.slice(-1);
+    const value = parseInt(expiry.slice(0, -1), 10);
+  
+    switch (unit) {
+      case "s":
+        return value;
+      case "m":
+        return value * 60;
+      case "h":
+        return value * 60 * 60;
+      case "d":
+        return value * 24 * 60 * 60;
+      default:
+        throw new Error(`Invalid expiry format: ${expiry}`);
+    }
+  };
+  
+
 const registerUser = asyncHandler( async (req,res) => {
     const {firstName,lastName,email,password} = req.body;
 
@@ -44,10 +63,17 @@ const registerUser = asyncHandler( async (req,res) => {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge: 7 * 24 * 60 * 60 * 1000,
           });
 
-        res.status(200).json({accesstoken, user : {
+          res.cookie("accessToken", accesstoken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: parseExpiryTime("1h") * 1000, 
+          });
+
+        res.status(200).json({user : {
             ...user._doc,
             password : null
         },message : "User Registered"});
@@ -70,11 +96,9 @@ const loginUser = asyncHandler(async (req,res) => {
 
     const user = await User.findOne({email});
 
-    let accesstoken;
     if(user && (await bcrypt.compare(password,user.password))){
         const accesstoken = await generateAccessToken(user);
         const refreshtoken = await generateRefreshToken(user);
-        console.log(accesstoken + " " + refreshtoken);
         
         res.cookie("refreshToken", refreshtoken, {
             httpOnly: true,
@@ -82,13 +106,50 @@ const loginUser = asyncHandler(async (req,res) => {
             sameSite: "Strict",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
+
+           res.cookie("accessToken", accesstoken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: parseExpiryTime("1h") * 1000, 
+          });
         
-        res.status(200).json({user,accesstoken,message : "User Logged In"});
+        res.status(200).json({user,message : "User Logged In"});
     }
     else{
         res.status(404).json({message : "Incorrect Email or Password"});
     }
 })
+
+const updateUser = async (req,res) => {
+    try{
+        const {firstName} = req.body;
+        const {id} = req.params;
+
+        const user = User.findOne({_id : id});
+
+        if(!user){
+            res.status(404).message({
+                message : "User not found"
+            });
+            throw new Error("User not found");
+        }else{
+            await User.updateOne({
+                firstName
+            });
+        }
+
+        res.status(200).message({
+            message : "User details successfully updated"
+        })
+    
+    }
+    catch(error){
+        res.status(404).message({
+            message : "Unable to update user's details"
+        })
+    }
+}
 
 const getAccessTokenUsingRefreshToken = asyncHandler(async (req,res) => {
 
@@ -120,4 +181,4 @@ const getAccessTokenUsingRefreshToken = asyncHandler(async (req,res) => {
     }
 });
 
-module.exports = {loginUser, registerUser, getAccessTokenUsingRefreshToken};
+module.exports = {loginUser, registerUser, getAccessTokenUsingRefreshToken,updateUser};

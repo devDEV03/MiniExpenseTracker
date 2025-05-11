@@ -7,10 +7,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem("accessToken");
-        if (accessToken) {
-            config.headers["Authorization"] = `Bearer ${accessToken}`;
-        }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -26,13 +23,15 @@ axiosInstance.interceptors.response.use(
                 const res = await axios.post("https://expense-backend-wawe.onrender.com/api/user/refresh-token", {}, { withCredentials: true });
                 const newAccessToken = res.data.accessToken;
                 localStorage.setItem("accessToken", newAccessToken);
-                error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+                 document.cookie = `accessToken=${newAccessToken}; path=/; secure;`;
                 return axiosInstance(error.config);
 
             } catch (refreshError) {
                 
                 console.error("Refresh Token Expired. Logging Out.");
                 localStorage.removeItem("accessToken");
+                 document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
                 window.location.href = "/"; 
                 return Promise.reject(refreshError);
             
